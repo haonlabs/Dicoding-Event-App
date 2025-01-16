@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Dicoding Event App</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_upcoming">Upcoming</string>
+    <string name="title_finished">Finished</string>
+    <string name="card_title">Event Title</string>
+    <string name="card_summary">Summary\n</string>
+    <string name="cd_card_image">A cover of a event</string>
+    <string name="image_cover">imageCover</string>
+    <string name="detail_register">Register</string>
+    <string name="sisa_kuota">Sisa kuota: %1$s</string>
+    <string name="penyelenggara">Penyelenggara: %1$s</string>
+    <string name="waktu">Waktu: %1$s</string>
+    <string name="oops_something_went_wrong">Oops, Something went wrong!</string>
+    <string name="try_again">Try Again</string>
+    <string name="error_image">error image</string>
+    <string name="upcoming_events">Upcoming events</string>
+    <string name="finished_events">Finished events</string>
+    <string name="search">Search Events</string>
+    <string name="searchbar_hint">Search Events</string>
+    <string name="this_activity">test</string>
+    <string name="search_hint">Search Events\n</string>
+</resources>
