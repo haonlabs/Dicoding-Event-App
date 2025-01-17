@@ -2,7 +2,9 @@ package id.haonlabs.dicodingeventapp.ui.detail
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.text.LineBreaker
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -29,6 +31,10 @@ class DetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            binding.detailDesc.justificationMode = LineBreaker.JUSTIFICATION_MODE_INTER_WORD
+        }
 
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
