@@ -18,4 +18,11 @@
     <string name="finished_events">Finished events</string>
     <string name="search">Search Events</string>
     <string name="searchbar_hint">Search Events</string>
+    <string name="title_favorite">Favorite</string>
+    <string name="title_setting">Setting</string>
+    <string name="untuk_menambahkan_event_ke_favorit">Untuk menambahkan event ke favorit</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="enable_dark_mode_for_better_night_time_readability">Enable dark mode for better night-time readability.</string>
+    <string name="daily_reminder">Daily Reminder</string>
+    <string name="receive_daily_reminders_for_upcoming_events">Receive daily reminders for upcoming events.</string>
 </resources>

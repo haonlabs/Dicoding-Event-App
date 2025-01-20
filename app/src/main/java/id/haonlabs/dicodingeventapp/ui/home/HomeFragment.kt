@@ -1,18 +1,20 @@
 package id.haonlabs.dicodingeventapp.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import id.haonlabs.dicodingeventapp.adapter.EventAdapter
 import id.haonlabs.dicodingeventapp.databinding.FragmentHomeBinding
+import id.haonlabs.dicodingeventapp.utils.Result
+import id.haonlabs.dicodingeventapp.viewmodel.ViewModelFactory
 import id.haonlabs.dicodingeventapp.viewmodel.event.FinishedFragmentViewModel
 import id.haonlabs.dicodingeventapp.viewmodel.event.UpcomingFragmentViewModel
+import id.haonlabs.dicodingeventapp.viewmodel.setting.SettingFragmentViewModel
 
 class HomeFragment : Fragment() {
 
@@ -23,22 +25,32 @@ class HomeFragment : Fragment() {
     private val binding
         get() = _binding!!
 
-    private val upcomingViewModel: UpcomingFragmentViewModel by viewModels()
-    private val finishedViewModel: FinishedFragmentViewModel by viewModels()
+    private val upcomingViewModel: UpcomingFragmentViewModel by viewModels {
+        ViewModelFactory.getInstance(requireActivity())
+    }
+    private val finishedViewModel: FinishedFragmentViewModel by viewModels {
+        ViewModelFactory.getInstance(requireActivity())
+    }
+    private val settingsViewModel: SettingFragmentViewModel by viewModels {
+        ViewModelFactory.getInstance(requireActivity())
+    }
 
     private val limit = 5
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        if (savedInstanceState == null) {
-            finishedViewModel.getEvents(limit)
-            upcomingViewModel.getEvents(limit)
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (savedInstanceState == null) {
+            finishedViewModel.getFinishedEvent(limit)
+            upcomingViewModel.getUpcomingEvent(limit)
+        }
+
+        settingsViewModel.getThemeSettings().observe(viewLifecycleOwner) { isDarkModeActive ->
+            if (isDarkModeActive) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
 
         getFinishedEvent()
         getUpcomingEvent()
@@ -53,11 +65,11 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
 
         binding.btnTryAgain.setOnClickListener {
-            upcomingViewModel.getEvents(limit)
+            upcomingViewModel.getUpcomingEvent(limit)
             binding.upcomingErrorPage.visibility = View.GONE
         }
         binding.finishedBtnTryAgain.setOnClickListener {
-            finishedViewModel.getEvents(limit)
+            finishedViewModel.getFinishedEvent(limit)
             binding.finishedErrorPage.visibility = View.GONE
         }
 
@@ -65,47 +77,63 @@ class HomeFragment : Fragment() {
     }
 
     private fun getFinishedEvent() {
+        finishedViewModel.listEvents.observe(viewLifecycleOwner) { result ->
+            if (result != null) {
+                when (result) {
+                    is Result.Loading -> {
+                        binding.finishedProgressBar.visibility = View.VISIBLE
+                    }
 
-        finishedViewModel.listEvent.observe(viewLifecycleOwner) {
-            Log.d("HomeFragment", "getFinishedEvent: $it")
-            binding.rvFinished.layoutManager = LinearLayoutManager(requireActivity())
-            val adapter = EventAdapter(it)
-            binding.rvFinished.adapter = adapter
-            binding.finishedErrorPage.visibility = View.GONE
-        }
+                    is Result.Success -> {
+                        binding.finishedProgressBar.visibility = View.GONE
+                        val listEventData = result.data
+                        binding.rvFinished.layoutManager = LinearLayoutManager(requireActivity())
+                        val adapter = EventAdapter(listEventData)
+                        binding.rvFinished.adapter = adapter
+                        binding.finishedErrorPage.visibility = View.GONE
+                    }
 
-        finishedViewModel.isLoading.observe(viewLifecycleOwner) {
-            Log.d("HomeFragment", "getFinishedEvent: $it")
-            binding.finishedProgressBar.visibility = if (it) View.VISIBLE else View.GONE
-        }
-
-        finishedViewModel.errorMessage.observe(viewLifecycleOwner) {
-            Log.d("HomeFragment", "getFinishedEvent: $it")
-            binding.finishedErrorPage.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
-            binding.finishedErrorMessage.text = it
+                    is Result.Error -> {
+                        binding.finishedProgressBar.visibility = View.GONE
+                        binding.finishedErrorPage.visibility =
+                            if (result.error.isNotEmpty()) View.VISIBLE else View.GONE
+                        binding.errorMessage.text = result.error
+                    }
+                }
+            }
         }
     }
 
     private fun getUpcomingEvent() {
+        upcomingViewModel.listEvents.observe(viewLifecycleOwner) { result ->
+            if (result != null) {
+                when (result) {
+                    is Result.Loading -> {
+                        binding.upcomingProgressBar.visibility = View.VISIBLE
+                    }
 
-        upcomingViewModel.listEvent.observe(viewLifecycleOwner) {
-            Log.d("HomeFragment", "getUpcomingEvent: $it")
-            binding.rvUpcoming.layoutManager =
-                LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
-            val adapter = EventAdapter(it, horizontal = true)
-            binding.rvUpcoming.adapter = adapter
-            binding.upcomingErrorPage.visibility = View.GONE
-        }
+                    is Result.Success -> {
+                        binding.upcomingProgressBar.visibility = View.GONE
+                        val listEventData = result.data
+                        binding.rvUpcoming.layoutManager =
+                            LinearLayoutManager(
+                                requireActivity(),
+                                LinearLayoutManager.HORIZONTAL,
+                                false,
+                            )
+                        val adapter = EventAdapter(listEventData, horizontal = true)
+                        binding.rvUpcoming.adapter = adapter
+                        binding.upcomingErrorPage.visibility = View.GONE
+                    }
 
-        upcomingViewModel.isLoading.observe(viewLifecycleOwner) {
-            Log.d("HomeFragment", "getUpcomingEvent: $it")
-            binding.upcomingProgressBar.isVisible = it
-        }
-
-        upcomingViewModel.errorMessage.observe(viewLifecycleOwner) {
-            Log.d("HomeFragment", "getUpcomingEvent: $it")
-            binding.upcomingErrorPage.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
-            binding.errorMessage.text = it
+                    is Result.Error -> {
+                        binding.upcomingProgressBar.visibility = View.GONE
+                        binding.upcomingErrorPage.visibility =
+                            if (result.error.isNotEmpty()) View.VISIBLE else View.GONE
+                        binding.errorMessage.text = result.error
+                    }
+                }
+            }
         }
     }
 

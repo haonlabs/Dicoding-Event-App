@@ -17,4 +17,6 @@ interface ApiService {
     @GET("events?active=-1") fun searchEvents(@Query("q") q: String): Call<EventResponse>
 
     @GET("events/{id}") fun getEventDetails(@Path("id") id: Int): Call<EventDetailResponse>
+
+    @GET("events?active=1&limit=1") fun getOneUpcomingEvent(): Call<EventResponse>
 }

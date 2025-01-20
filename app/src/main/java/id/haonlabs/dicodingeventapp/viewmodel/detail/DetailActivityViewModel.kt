@@ -1,51 +1,37 @@
 package id.haonlabs.dicodingeventapp.viewmodel.detail
 
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import id.haonlabs.dicodingeventapp.data.local.entity.FavoriteEvent
 import id.haonlabs.dicodingeventapp.data.response.Event
-import id.haonlabs.dicodingeventapp.data.response.EventDetailResponse
-import id.haonlabs.dicodingeventapp.retrofit.ApiConfig
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import id.haonlabs.dicodingeventapp.repository.EventRepository
+import id.haonlabs.dicodingeventapp.repository.FavoriteEventRepository
+import id.haonlabs.dicodingeventapp.utils.Result
+import kotlinx.coroutines.launch
 
-class DetailActivityViewModel : ViewModel() {
-    private val _event = MutableLiveData<Event>()
-    val event: LiveData<Event> = _event
+class DetailActivityViewModel(
+    private val eventRepository: EventRepository,
+    private val favoriteEventRepository: FavoriteEventRepository,
+) : ViewModel() {
+    lateinit var event: LiveData<Result<Event>>
+    lateinit var favoriteEvent: LiveData<FavoriteEvent>
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
+    fun getDetailEvent(id: Int): LiveData<Result<Event>> {
+        event = eventRepository.getDetailEvent(id)
+        return event
+    }
 
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> = _errorMessage
+    fun insert(favoriteEvent: FavoriteEvent) {
+        viewModelScope.launch { favoriteEventRepository.insert(favoriteEvent) }
+    }
 
-    fun getDetailEvent(id: Int) {
-        _isLoading.value = true
-        val client = ApiConfig.getApiService().getEventDetails(id)
-        client.enqueue(
-            object : Callback<EventDetailResponse> {
-                override fun onResponse(
-                    call: Call<EventDetailResponse>,
-                    response: Response<EventDetailResponse>,
-                ) {
-                    _isLoading.value = false
-                    if (response.isSuccessful) {
-                        _event.value = response.body()?.event
-                        _errorMessage.value = ""
-                    } else {
-                        Log.e("DetailActivityViewModel", response.message())
-                        _errorMessage.value = response.message()
-                    }
-                }
+    fun getFavoriteEventById(id: Int): LiveData<FavoriteEvent> {
+        favoriteEvent = favoriteEventRepository.getFavoriteEventById(id)
+        return favoriteEvent
+    }
 
-                override fun onFailure(call: Call<EventDetailResponse>, t: Throwable) {
-                    _isLoading.value = false
-                    Log.e("DetailActivityViewModel", "onFailure: ${t.message.toString()}")
-                    _errorMessage.value = t.message.toString()
-                }
-            }
-        )
+    fun delete(favoriteEvent: FavoriteEvent) {
+        viewModelScope.launch { favoriteEventRepository.delete(favoriteEvent) }
     }
 }

@@ -1,24 +1,26 @@
 package id.haonlabs.dicodingeventapp.ui.search
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import id.haonlabs.dicodingeventapp.R
 import id.haonlabs.dicodingeventapp.adapter.EventAdapter
 import id.haonlabs.dicodingeventapp.databinding.ActivitySearchBinding
+import id.haonlabs.dicodingeventapp.utils.Result
+import id.haonlabs.dicodingeventapp.viewmodel.ViewModelFactory
 import id.haonlabs.dicodingeventapp.viewmodel.search.SearchActivityViewModel
 
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
 
-    private val viewModel: SearchActivityViewModel by viewModels()
+    private val viewModel: SearchActivityViewModel by viewModels {
+        ViewModelFactory.getInstance(this@SearchActivity)
+    }
 
     companion object {
         const val EXTRA_SEARCH = "extra_search"
@@ -39,7 +41,7 @@ class SearchActivity : AppCompatActivity() {
         val keyword = intent.getStringExtra(EXTRA_SEARCH) ?: ""
 
         if (savedInstanceState == null) {
-            viewModel.searchEvent(keyword)
+            viewModel.searchEvents(keyword)
         }
 
         with(binding) {
@@ -51,37 +53,39 @@ class SearchActivity : AppCompatActivity() {
                 searchView.hide()
                 binding.searchView.hide()
                 binding.rvSearch.adapter = null
-                viewModel.searchEvent(searchBar.text.toString())
+                viewModel.searchEvents(searchBar.text.toString())
                 false
             }
         }
 
-        viewModel.listEvent.observe(this) {
-            binding.rvSearch.layoutManager = LinearLayoutManager(this@SearchActivity)
-            val adapter = EventAdapter(it)
-            binding.rvSearch.adapter = adapter
-            binding.errorPage.visibility = View.GONE
-        }
+        viewModel.listEvents.observe(this) { result ->
+            if (result != null) {
+                when (result) {
+                    is Result.Loading -> {
+                        binding.loading.visibility = View.VISIBLE
+                    }
 
-        viewModel.resultText.observe(this) {
-            Log.d("SearchActivity", "onCreate: $it")
-            binding.searchNotFound.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
-            binding.searchNotFound.text = it
-        }
+                    is Result.Success -> {
+                        binding.loading.visibility = View.GONE
+                        val listEventData = result.data
+                        binding.rvSearch.layoutManager = LinearLayoutManager(this@SearchActivity)
+                        val adapter = EventAdapter(listEventData)
+                        binding.rvSearch.adapter = adapter
+                        binding.errorPage.visibility = View.GONE
+                    }
 
-        viewModel.isLoading.observe(this) {
-            Log.d("isLoading", "onCreate: $it")
-            binding.loading.isVisible = it
-        }
-
-        viewModel.errorMessage.observe(this) {
-            Log.d("errMsg", "onCreate: $it")
-            binding.errorPage.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
-            binding.errorMessage.text = it
+                    is Result.Error -> {
+                        binding.loading.visibility = View.GONE
+                        binding.errorPage.visibility =
+                            if (result.error.isNotEmpty()) View.VISIBLE else View.GONE
+                        binding.errorMessage.text = result.error
+                    }
+                }
+            }
         }
 
         binding.btnTryAgain.setOnClickListener {
-            viewModel.searchEvent(binding.searchBar.text.toString())
+            viewModel.searchEvents(binding.searchBar.text.toString())
             binding.errorPage.visibility = View.GONE
         }
 

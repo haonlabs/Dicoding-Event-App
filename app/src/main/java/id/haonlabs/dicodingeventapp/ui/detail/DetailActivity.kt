@@ -1,21 +1,23 @@
 package id.haonlabs.dicodingeventapp.ui.detail
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.text.LineBreaker
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
 import id.haonlabs.dicodingeventapp.R
+import id.haonlabs.dicodingeventapp.data.local.entity.FavoriteEvent
 import id.haonlabs.dicodingeventapp.databinding.ActivityDetailBinding
+import id.haonlabs.dicodingeventapp.utils.Result
 import id.haonlabs.dicodingeventapp.utils.loadImage
+import id.haonlabs.dicodingeventapp.viewmodel.ViewModelFactory
 import id.haonlabs.dicodingeventapp.viewmodel.detail.DetailActivityViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -24,7 +26,6 @@ import java.util.Locale
 class DetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailBinding
-    private val viewModel: DetailActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +37,8 @@ class DetailActivity : AppCompatActivity() {
             binding.detailDesc.justificationMode = LineBreaker.JUSTIFICATION_MODE_INTER_WORD
         }
 
+        val factory: ViewModelFactory = ViewModelFactory.getInstance(this)
+        val viewModel: DetailActivityViewModel by viewModels { factory }
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             title = "Detail Event"
@@ -47,29 +50,86 @@ class DetailActivity : AppCompatActivity() {
             viewModel.getDetailEvent(eventId)
         }
 
-        viewModel.event.observe(this) {
-            supportActionBar?.title = it.name
+        viewModel.event.observe(this) { result ->
+            if (result != null) {
+                when (result) {
+                    is Result.Loading -> {
+                        binding.loading.visibility = View.VISIBLE
+                    }
 
-            binding.apply {
-                detailImg.loadImage(it.mediaCover)
-                binding.detailName.text = it.name
-                binding.detailOwnerName.text = getString(R.string.penyelenggara, it.ownerName)
-                binding.detailTime.text =
-                    getString(R.string.waktu, convertToHumanReadable(it.beginTime))
-                binding.detailQuota.text =
-                    getString(
-                        R.string.sisa_kuota,
-                        String.format(Locale.getDefault(), "%d", it.quota - it.registrants),
-                    )
+                    is Result.Success -> {
+                        binding.loading.visibility = View.GONE
+                        val eventData = result.data
+                        supportActionBar?.title = eventData.name
 
-                binding.detailDesc.text =
-                    HtmlCompat.fromHtml(it.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                binding.detailRegister.visibility = View.VISIBLE
-                binding.errorPage.visibility = View.GONE
+                        binding.apply {
+                            viewModel.getFavoriteEventById(eventData.id).observe(
+                                this@DetailActivity
+                            ) { favoriteEvent ->
+                                Log.d("DetailActivity", "favoriteEvent: $favoriteEvent")
+                                val favoriteEventData =
+                                    FavoriteEvent(
+                                        eventData.id,
+                                        eventData.name,
+                                        eventData.mediaCover,
+                                        eventData.imageLogo,
+                                        eventData.summary,
+                                    )
+                                if (favoriteEvent != null) {
+                                    binding.detailFabFavorite.setImageResource(
+                                        R.drawable.ic_favorite_red
+                                    )
+                                    detailFabFavorite.setOnClickListener {
+                                        viewModel.delete(favoriteEventData)
+                                    }
+                                } else {
+                                    binding.detailFabFavorite.setImageResource(
+                                        R.drawable.ic_favorite_black
+                                    )
+                                    detailFabFavorite.setOnClickListener {
+                                        viewModel.insert(favoriteEventData)
+                                    }
+                                }
+                            }
+                            detailImg.loadImage(eventData.mediaCover)
+                            binding.detailName.text = eventData.name
+                            binding.detailOwnerName.text =
+                                getString(R.string.penyelenggara, eventData.ownerName)
+                            binding.detailTime.text =
+                                getString(
+                                    R.string.waktu,
+                                    convertToHumanReadable(eventData.beginTime),
+                                )
+                            binding.detailQuota.text =
+                                getString(
+                                    R.string.sisa_kuota,
+                                    String.format(
+                                        Locale.getDefault(),
+                                        "%d",
+                                        eventData.quota - eventData.registrants,
+                                    ),
+                                )
+
+                            binding.detailDesc.text =
+                                HtmlCompat.fromHtml(
+                                    eventData.description,
+                                    HtmlCompat.FROM_HTML_MODE_LEGACY,
+                                )
+                            binding.detailFabFavorite.visibility = View.VISIBLE
+                            binding.detailRegister.visibility = View.VISIBLE
+                            binding.errorPage.visibility = View.GONE
+                        }
+                    }
+
+                    is Result.Error -> {
+                        binding.loading.visibility = View.GONE
+                        binding.errorPage.visibility =
+                            if (result.error.isNotEmpty()) View.VISIBLE else View.GONE
+                        binding.errorMessage.text = result.error
+                    }
+                }
             }
         }
-
-        viewModel.isLoading.observe(this) { binding.loading.isVisible = it }
 
         binding.detailRegister.setOnClickListener {
             val url = "https://www.dicoding.com/events/${eventId}"
@@ -79,11 +139,6 @@ class DetailActivity : AppCompatActivity() {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
             startActivity(intent)
-        }
-
-        viewModel.errorMessage.observe(this) {
-            binding.errorPage.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
-            binding.errorMessage.text = it
         }
 
         binding.btnTryAgain.setOnClickListener {
@@ -104,9 +159,13 @@ class DetailActivity : AppCompatActivity() {
         return super.onSupportNavigateUp()
     }
 
-    @SuppressLint("NewApi")
     private fun convertToHumanReadable(dateTimeString: String): String {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val formatter =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            } else {
+                TODO("VERSION.SDK_INT < O")
+            }
         val dateTime = LocalDateTime.parse(dateTimeString, formatter)
         val humanReadableFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy hh:mm a")
         return dateTime.format(humanReadableFormatter)
