@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.Looper
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
@@ -49,7 +48,6 @@ class ReminderWorker(context: Context, workerParams: WorkerParameters) :
                         val title = listEvents?.get(0)?.name
                         val time = listEvents?.get(0)?.beginTime
                         showNotification(title, time)
-                        Log.d(TAG, "onSuccess: Selesai.....")
                         resultStatus = Result.success()
                     } else {
                         showNotification("Event sedang tidak ada", response.message())
@@ -60,7 +58,6 @@ class ReminderWorker(context: Context, workerParams: WorkerParameters) :
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun onFailure(call: Call<EventResponse>, t: Throwable) {
                     showNotification("Gagal mendapatkan event terdekat", t.message.toString())
-                    Log.d(TAG, "onSuccess: Gagal.....")
                     resultStatus = Result.failure()
                 }
             }
