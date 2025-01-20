@@ -20,7 +20,6 @@ class ReminderWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
 
     companion object {
-        private val TAG = ReminderWorker::class.java.simpleName
         const val NOTIFICATION_ID = 1
         const val CHANNEL_ID = "channel_01"
         const val CHANNEL_NAME = "dicoding channel"
