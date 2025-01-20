@@ -23,13 +23,13 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/dark_mode"
+                android:text="@string/dark_theme"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/enable_dark_mode_for_better_night_time_readability"
+                android:text="@string/enable_dark_theme_for_better_night_time_readability"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp" />
         </LinearLayout>

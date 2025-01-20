@@ -6,13 +6,13 @@ import android.content.Context
 import android.os.Build
 import android.os.Looper
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import id.haonlabs.dicodingeventapp.R
 import id.haonlabs.dicodingeventapp.data.response.EventResponse
 import id.haonlabs.dicodingeventapp.retrofit.ApiConfig
-import id.haonlabs.dicodingeventapp.utils.Result
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,12 +34,12 @@ class ReminderWorker(context: Context, workerParams: WorkerParameters) :
     }
 
     private fun getUpcomingEvent(): Result {
-        Log.d(TAG, "getUpcomingEvent: Start.....")
         Looper.prepare()
         val apiService = ApiConfig.getApiService()
         val client = apiService.getOneUpcomingEvent()
         client.enqueue(
             object : Callback<EventResponse> {
+                @RequiresApi(Build.VERSION_CODES.O)
                 override fun onResponse(
                     call: Call<EventResponse>,
                     response: Response<EventResponse>,
@@ -57,6 +57,7 @@ class ReminderWorker(context: Context, workerParams: WorkerParameters) :
                     }
                 }
 
+                @RequiresApi(Build.VERSION_CODES.O)
                 override fun onFailure(call: Call<EventResponse>, t: Throwable) {
                     showNotification("Gagal mendapatkan event terdekat", t.message.toString())
                     Log.d(TAG, "onSuccess: Gagal.....")
@@ -67,6 +68,7 @@ class ReminderWorker(context: Context, workerParams: WorkerParameters) :
         return resultStatus ?: Result.failure()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun showNotification(title: String?, description: String?) {
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -79,11 +81,7 @@ class ReminderWorker(context: Context, workerParams: WorkerParameters) :
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
         val channel =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
-            } else {
-                TODO("VERSION.SDK_INT < O")
-            }
+            NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
         notification.setChannelId(CHANNEL_ID)
         notificationManager.createNotificationChannel(channel)
         notificationManager.notify(NOTIFICATION_ID, notification.build())

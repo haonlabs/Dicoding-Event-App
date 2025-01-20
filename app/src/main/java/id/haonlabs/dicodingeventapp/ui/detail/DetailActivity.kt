@@ -5,9 +5,9 @@ import android.graphics.text.LineBreaker
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
@@ -27,6 +27,7 @@ class DetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailBinding
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
@@ -66,7 +67,6 @@ class DetailActivity : AppCompatActivity() {
                             viewModel.getFavoriteEventById(eventData.id).observe(
                                 this@DetailActivity
                             ) { favoriteEvent ->
-                                Log.d("DetailActivity", "favoriteEvent: $favoriteEvent")
                                 val favoriteEventData =
                                     FavoriteEvent(
                                         eventData.id,
@@ -159,13 +159,10 @@ class DetailActivity : AppCompatActivity() {
         return super.onSupportNavigateUp()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun convertToHumanReadable(dateTimeString: String): String {
-        val formatter =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            } else {
-                TODO("VERSION.SDK_INT < O")
-            }
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
         val dateTime = LocalDateTime.parse(dateTimeString, formatter)
         val humanReadableFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy hh:mm a")
         return dateTime.format(humanReadableFormatter)
