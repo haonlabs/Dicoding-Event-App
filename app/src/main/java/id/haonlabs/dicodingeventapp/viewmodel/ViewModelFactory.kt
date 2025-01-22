@@ -29,20 +29,21 @@ private constructor(
 ) : ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(DetailActivityViewModel::class.java)) {
-            return DetailActivityViewModel(eventRepository, favoriteEventRepository) as T
-        } else if (modelClass.isAssignableFrom(UpcomingFragmentViewModel::class.java)) {
-            return UpcomingFragmentViewModel(upcomingEventRepository) as T
-        } else if (modelClass.isAssignableFrom(FinishedFragmentViewModel::class.java)) {
-            return FinishedFragmentViewModel(finishedEventRepository) as T
-        } else if (modelClass.isAssignableFrom(SearchActivityViewModel::class.java)) {
-            return SearchActivityViewModel(searchEventRepository) as T
-        } else if (modelClass.isAssignableFrom(FavoriteFragmentViewModel::class.java)) {
-            return FavoriteFragmentViewModel(favoriteEventRepository) as T
-        } else if (modelClass.isAssignableFrom(SettingFragmentViewModel::class.java)) {
-            return SettingFragmentViewModel(pref) as T
+        return when {
+            modelClass.isAssignableFrom(DetailActivityViewModel::class.java) ->
+                DetailActivityViewModel(eventRepository, favoriteEventRepository) as T
+            modelClass.isAssignableFrom(UpcomingFragmentViewModel::class.java) ->
+                UpcomingFragmentViewModel(upcomingEventRepository) as T
+            modelClass.isAssignableFrom(FinishedFragmentViewModel::class.java) ->
+                FinishedFragmentViewModel(finishedEventRepository) as T
+            modelClass.isAssignableFrom(SearchActivityViewModel::class.java) ->
+                SearchActivityViewModel(searchEventRepository) as T
+            modelClass.isAssignableFrom(FavoriteFragmentViewModel::class.java) ->
+                FavoriteFragmentViewModel(favoriteEventRepository) as T
+            modelClass.isAssignableFrom(SettingFragmentViewModel::class.java) ->
+                SettingFragmentViewModel(pref) as T
+            else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
-        throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
 
     companion object {
@@ -53,10 +54,10 @@ private constructor(
                 ?: synchronized(this) {
                         instance
                             ?: ViewModelFactory(
-                                Injection.provideRepository(context),
-                                Injection.provideUpcomingEventsRepository(context),
-                                Injection.provideFinishedEventsRepository(context),
-                                Injection.provideSearchEventsRepository(context),
+                                Injection.provideRepository(),
+                                Injection.provideUpcomingEventsRepository(),
+                                Injection.provideFinishedEventsRepository(),
+                                Injection.provideSearchEventsRepository(),
                                 Injection.provideFavoriteEventRepository(context),
                                 SettingPreference.getInstance(context.dataStore),
                             )

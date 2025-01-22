@@ -35,7 +35,7 @@ class SearchActivity : AppCompatActivity() {
 
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
-            title = "Search Event"
+            title = getString(R.string.search)
         }
 
         val keyword = intent.getStringExtra(EXTRA_SEARCH) ?: ""

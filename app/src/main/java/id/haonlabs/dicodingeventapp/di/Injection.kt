@@ -9,22 +9,22 @@ import id.haonlabs.dicodingeventapp.repository.UpcomingEventRepository
 import id.haonlabs.dicodingeventapp.retrofit.ApiConfig
 
 object Injection {
-    fun provideRepository(context: Context): EventRepository {
+    fun provideRepository(): EventRepository {
         val apiService = ApiConfig.getApiService()
         return EventRepository.getInstance(apiService)
     }
 
-    fun provideUpcomingEventsRepository(context: Context): UpcomingEventRepository {
+    fun provideUpcomingEventsRepository(): UpcomingEventRepository {
         val apiService = ApiConfig.getApiService()
         return UpcomingEventRepository.getInstance(apiService)
     }
 
-    fun provideFinishedEventsRepository(context: Context): FinishedEventRepository {
+    fun provideFinishedEventsRepository(): FinishedEventRepository {
         val apiService = ApiConfig.getApiService()
         return FinishedEventRepository.getInstance(apiService)
     }
 
-    fun provideSearchEventsRepository(context: Context): SearchEventRepository {
+    fun provideSearchEventsRepository(): SearchEventRepository {
         val apiService = ApiConfig.getApiService()
         return SearchEventRepository.getInstance(apiService)
     }

@@ -24,11 +24,13 @@ class MainActivity : AppCompatActivity() {
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean
             ->
-            if (isGranted) {
-                Toast.makeText(this, "Notifications permission granted", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Notifications permission rejected", Toast.LENGTH_SHORT).show()
-            }
+            Toast.makeText(
+                    this,
+                    if (isGranted) "Notifications permission granted"
+                    else "Notifications permission rejected",
+                    Toast.LENGTH_SHORT,
+                )
+                .show()
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
