@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primaryColor">#FF727D73</color>
-    <color name="primaryOnColor">#FF000000</color>
+    <color name="primaryOnColor">#FFFFFFFF</color>
     <color name="actionBtn">#FF000000</color>
 </resources>
