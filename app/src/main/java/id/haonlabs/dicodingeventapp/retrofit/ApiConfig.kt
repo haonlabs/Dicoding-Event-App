@@ -1,6 +1,7 @@
 package id.haonlabs.dicodingeventapp.retrofit
 
 import id.haonlabs.dicodingeventapp.BuildConfig
+import id.haonlabs.dicodingeventapp.BuildConfig.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -8,9 +9,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiConfig {
     companion object {
+        private const val BASE_URL = BuildConfig.BASE_URL
+
         fun getApiService(): ApiService {
             val loggingInterceptor =
-                if (BuildConfig.DEBUG) {
+                if (DEBUG) {
                     HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
                 } else {
                     HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE)
@@ -19,7 +22,7 @@ class ApiConfig {
             val client = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()
             val retrofit =
                 Retrofit.Builder()
-                    .baseUrl("https://event-api.dicoding.dev/")
+                    .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build()

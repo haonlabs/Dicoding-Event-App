@@ -52,38 +52,38 @@ class DetailActivity : AppCompatActivity() {
 
             binding.apply {
                 detailImg.loadImage(it.mediaCover)
-                binding.detailName.text = it.name
-                binding.detailOwnerName.text = getString(R.string.penyelenggara, it.ownerName)
-                binding.detailTime.text =
-                    getString(R.string.waktu, convertToHumanReadable(it.beginTime))
-                binding.detailQuota.text =
+                detailName.text = it.name
+                detailOwnerName.text = getString(R.string.penyelenggara, it.ownerName)
+                detailTime.text = getString(R.string.waktu, convertToHumanReadable(it.beginTime))
+                detailQuota.text =
                     getString(
                         R.string.sisa_kuota,
                         String.format(Locale.getDefault(), "%d", it.quota - it.registrants),
                     )
 
-                binding.detailDesc.text =
+                detailDesc.text =
                     HtmlCompat.fromHtml(it.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                binding.detailRegister.visibility = View.VISIBLE
-                binding.errorPage.visibility = View.GONE
+                detailRegister.visibility = View.VISIBLE
+                errorPage.visibility = View.GONE
+            }
+            val url = it.link
+            binding.detailRegister.setOnClickListener {
+                val intent =
+                    Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                        addCategory(Intent.CATEGORY_BROWSABLE)
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                startActivity(intent)
             }
         }
 
         viewModel.isLoading.observe(this) { binding.loading.isVisible = it }
 
-        binding.detailRegister.setOnClickListener {
-            val url = "https://www.dicoding.com/events/${eventId}"
-            val intent =
-                Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-                    addCategory(Intent.CATEGORY_BROWSABLE)
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-            startActivity(intent)
-        }
-
         viewModel.errorMessage.observe(this) {
-            binding.errorPage.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
-            binding.errorMessage.text = it
+            binding.apply {
+                errorPage.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
+                errorMessage.text = it
+            }
         }
 
         binding.btnTryAgain.setOnClickListener {

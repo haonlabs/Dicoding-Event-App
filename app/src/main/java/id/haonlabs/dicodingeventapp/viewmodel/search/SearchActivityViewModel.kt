@@ -1,6 +1,5 @@
 package id.haonlabs.dicodingeventapp.viewmodel.search
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -43,7 +42,6 @@ class SearchActivityViewModel : ViewModel() {
                             _resultText.value = ""
                         }
                     } else {
-                        Log.e("SearchActivityViewModel", response.message())
                         _errorMessage.value = response.message()
                     }
                 }
@@ -52,7 +50,6 @@ class SearchActivityViewModel : ViewModel() {
                     _isLoading.value = false
                     _errorMessage.value = t.message.toString()
                     _resultText.value = ""
-                    Log.e("SearchActivityViewModel", "onFailure: ${t.message.toString()}")
                 }
             }
         )

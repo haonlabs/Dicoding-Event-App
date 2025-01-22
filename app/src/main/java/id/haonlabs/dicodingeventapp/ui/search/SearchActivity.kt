@@ -1,7 +1,6 @@
 package id.haonlabs.dicodingeventapp.ui.search
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -57,27 +56,28 @@ class SearchActivity : AppCompatActivity() {
         }
 
         viewModel.listEvent.observe(this) {
-            binding.rvSearch.layoutManager = LinearLayoutManager(this@SearchActivity)
-            val adapter = EventAdapter(it)
-            binding.rvSearch.adapter = adapter
-            binding.errorPage.visibility = View.GONE
+            binding.apply {
+                rvSearch.layoutManager = LinearLayoutManager(this@SearchActivity)
+                val adapter = EventAdapter(it)
+                rvSearch.adapter = adapter
+                errorPage.visibility = View.GONE
+            }
         }
 
         viewModel.resultText.observe(this) {
-            Log.d("SearchActivity", "onCreate: $it")
-            binding.searchNotFound.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
-            binding.searchNotFound.text = it
+            binding.apply {
+                searchNotFound.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
+                searchNotFound.text = it
+            }
         }
 
-        viewModel.isLoading.observe(this) {
-            Log.d("isLoading", "onCreate: $it")
-            binding.loading.isVisible = it
-        }
+        viewModel.isLoading.observe(this) { binding.loading.isVisible = it }
 
         viewModel.errorMessage.observe(this) {
-            Log.d("errMsg", "onCreate: $it")
-            binding.errorPage.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
-            binding.errorMessage.text = it
+            binding.apply {
+                errorPage.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
+                errorMessage.text = it
+            }
         }
 
         binding.btnTryAgain.setOnClickListener {

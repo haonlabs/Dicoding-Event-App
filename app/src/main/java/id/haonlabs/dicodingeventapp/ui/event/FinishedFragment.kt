@@ -24,17 +24,21 @@ class FinishedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.listEvent.observe(viewLifecycleOwner) {
-            binding.rvFinished.layoutManager = LinearLayoutManager(requireActivity())
-            val adapter = EventAdapter(it)
-            binding.rvFinished.adapter = adapter
-            binding.errorPage.visibility = View.GONE
+            binding.apply {
+                rvFinished.layoutManager = LinearLayoutManager(requireActivity())
+                val adapter = EventAdapter(it)
+                rvFinished.adapter = adapter
+                errorPage.visibility = View.GONE
+            }
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { binding.loading.isVisible = it }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) {
-            binding.errorPage.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
-            binding.errorMessage.text = it
+            binding.apply {
+                errorPage.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
+                errorMessage.text = it
+            }
         }
     }
 

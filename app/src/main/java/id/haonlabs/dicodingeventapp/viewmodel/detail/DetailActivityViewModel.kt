@@ -1,6 +1,5 @@
 package id.haonlabs.dicodingeventapp.viewmodel.detail
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,14 +34,12 @@ class DetailActivityViewModel : ViewModel() {
                         _event.value = response.body()?.event
                         _errorMessage.value = ""
                     } else {
-                        Log.e("DetailActivityViewModel", response.message())
                         _errorMessage.value = response.message()
                     }
                 }
 
                 override fun onFailure(call: Call<EventDetailResponse>, t: Throwable) {
                     _isLoading.value = false
-                    Log.e("DetailActivityViewModel", "onFailure: ${t.message.toString()}")
                     _errorMessage.value = t.message.toString()
                 }
             }

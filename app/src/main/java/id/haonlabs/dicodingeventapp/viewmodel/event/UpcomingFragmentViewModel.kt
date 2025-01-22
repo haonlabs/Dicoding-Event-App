@@ -1,6 +1,5 @@
 package id.haonlabs.dicodingeventapp.viewmodel.event
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,7 +34,6 @@ class UpcomingFragmentViewModel : ViewModel() {
                         _listEvent.value = response.body()?.listEvents
                         _errorMessage.value = ""
                     } else {
-                        Log.e("UpcomingViewModel", response.message())
                         _errorMessage.value = response.message()
                     }
                 }
@@ -43,7 +41,6 @@ class UpcomingFragmentViewModel : ViewModel() {
                 override fun onFailure(call: Call<EventResponse>, t: Throwable) {
                     _isLoading.value = false
                     _errorMessage.value = t.message.toString()
-                    Log.e("UpcomingViewModel", "onFailure: ${t.message.toString()}")
                 }
             }
         )

@@ -33,14 +33,18 @@ class EventAdapter(
         val data = listEvent[position]
         if (horizontal) {
             val binding = holder.binding as HorizontalRowEventBinding
-            binding.cardTitle.text = data.name
-            binding.cardSummary.text = data.summary
-            binding.cardCover.loadImage(data.imageLogo)
+            binding.apply {
+                cardTitle.text = data.name
+                cardSummary.text = data.summary
+                cardCover.loadImage(data.imageLogo)
+            }
         } else {
             val binding = holder.binding as ItemRowEventBinding
-            binding.cardTitle.text = data.name
-            binding.cardSummary.text = data.summary
-            binding.cardCover.loadImage(data.imageLogo)
+            binding.apply {
+                cardTitle.text = data.name
+                cardSummary.text = data.summary
+                cardCover.loadImage(data.imageLogo)
+            }
         }
 
         holder.itemView.setOnClickListener {
