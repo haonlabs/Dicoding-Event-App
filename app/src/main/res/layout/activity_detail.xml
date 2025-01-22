@@ -160,7 +160,7 @@
             android:contentDescription="@string/menambahkan_event_ke_favorit"
             android:focusable="true"
             android:visibility="gone"
-            app:backgroundTint="@color/green"
+            app:backgroundTint="@color/primaryColor"
             app:layout_constraintBottom_toTopOf="@+id/detail_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

@@ -2,7 +2,8 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.DicodingEventApp" parent="Theme.Material3.DayNight">
         <!-- Customize your light theme here. -->
-        <item name="colorPrimary">@color/green</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorOnPrimary">@color/primaryOnColor</item>
     </style>
 
     <style name="Theme.DicodingEventApp" parent="Base.Theme.DicodingEventApp" />

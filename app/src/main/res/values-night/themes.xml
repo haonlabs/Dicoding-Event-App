@@ -2,12 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.DicodingEventApp" parent="Theme.Material3.DayNight">
         <!-- Customize your dark theme here. -->
-        <item name="colorPrimary">@color/dark</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="toolbarStyle">@style/Theme.Custom.Toolbar</item>
-    </style>
-
-    <style name="Theme.Custom.Toolbar" parent="Widget.Material3.Toolbar">
-        <item name="android:background">@color/grey</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorOnPrimary">@color/primaryOnColor</item>
     </style>
 </resources>
