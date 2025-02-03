@@ -10,8 +10,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SearchEventRepository private constructor(private val apiService: ApiService) {
-
+class SearchEventRepository private constructor(
+    private val apiService: ApiService,
+) {
     private val result = MediatorLiveData<Result<List<ListEventsItem>>>()
 
     fun searchEvents(keyword: String): LiveData<Result<List<ListEventsItem>>> {
@@ -34,10 +35,13 @@ class SearchEventRepository private constructor(private val apiService: ApiServi
                     }
                 }
 
-                override fun onFailure(call: Call<EventResponse>, t: Throwable) {
+                override fun onFailure(
+                    call: Call<EventResponse>,
+                    t: Throwable,
+                ) {
                     result.value = Result.Error(t.message.toString())
                 }
-            }
+            },
         )
         return result
     }
@@ -45,11 +49,10 @@ class SearchEventRepository private constructor(private val apiService: ApiServi
     companion object {
         @Volatile private var instance: SearchEventRepository? = null
 
-        fun getInstance(apiService: ApiService): SearchEventRepository {
-            return instance
+        fun getInstance(apiService: ApiService): SearchEventRepository =
+            instance
                 ?: synchronized(this) {
                     instance ?: SearchEventRepository(apiService).also { instance = it }
                 }
-        }
     }
 }

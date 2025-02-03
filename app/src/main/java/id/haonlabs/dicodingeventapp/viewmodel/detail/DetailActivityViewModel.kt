@@ -15,7 +15,7 @@ class DetailActivityViewModel(
     private val favoriteEventRepository: FavoriteEventRepository,
 ) : ViewModel() {
     lateinit var event: LiveData<Result<Event>>
-    lateinit var favoriteEvent: LiveData<FavoriteEvent>
+    private lateinit var favoriteEvent: LiveData<FavoriteEvent>
 
     fun getDetailEvent(id: Int): LiveData<Result<Event>> {
         event = eventRepository.getDetailEvent(id)

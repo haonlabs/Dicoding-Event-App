@@ -24,6 +24,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class DetailActivity : AppCompatActivity() {
+    companion object {
+        const val EXTRA_EVENT_ID = "extra_event_id"
+    }
 
     private lateinit var binding: ActivityDetailBinding
 
@@ -65,7 +68,7 @@ class DetailActivity : AppCompatActivity() {
 
                         binding.apply {
                             viewModel.getFavoriteEventById(eventData.id).observe(
-                                this@DetailActivity
+                                this@DetailActivity,
                             ) { favoriteEvent ->
                                 val favoriteEventData =
                                     FavoriteEvent(
@@ -74,17 +77,18 @@ class DetailActivity : AppCompatActivity() {
                                         eventData.mediaCover,
                                         eventData.imageLogo,
                                         eventData.summary,
+                                        eventData.link,
                                     )
                                 if (favoriteEvent != null) {
                                     binding.detailFabFavorite.setImageResource(
-                                        R.drawable.ic_favorite_red
+                                        R.drawable.ic_favorite_red,
                                     )
                                     detailFabFavorite.setOnClickListener {
                                         viewModel.delete(favoriteEventData)
                                     }
                                 } else {
                                     binding.detailFabFavorite.setImageResource(
-                                        R.drawable.ic_favorite_black
+                                        R.drawable.ic_favorite_black,
                                     )
                                     detailFabFavorite.setOnClickListener {
                                         viewModel.insert(favoriteEventData)
@@ -118,6 +122,15 @@ class DetailActivity : AppCompatActivity() {
                             binding.detailFabFavorite.visibility = View.VISIBLE
                             binding.detailRegister.visibility = View.VISIBLE
                             binding.errorPage.visibility = View.GONE
+
+                            binding.detailRegister.setOnClickListener {
+                                val intent =
+                                    Intent(Intent.ACTION_VIEW, Uri.parse(eventData.link)).apply {
+                                        addCategory(Intent.CATEGORY_BROWSABLE)
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    }
+                                startActivity(intent)
+                            }
                         }
                     }
 
@@ -129,16 +142,6 @@ class DetailActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
-
-        binding.detailRegister.setOnClickListener {
-            val url = "https://www.dicoding.com/events/${eventId}"
-            val intent =
-                Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-                    addCategory(Intent.CATEGORY_BROWSABLE)
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-            startActivity(intent)
         }
 
         binding.btnTryAgain.setOnClickListener {
@@ -166,9 +169,5 @@ class DetailActivity : AppCompatActivity() {
         val dateTime = LocalDateTime.parse(dateTimeString, formatter)
         val humanReadableFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy hh:mm a")
         return dateTime.format(humanReadableFormatter)
-    }
-
-    companion object {
-        const val EXTRA_EVENT_ID = "extra_event_id"
     }
 }

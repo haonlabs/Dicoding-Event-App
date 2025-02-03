@@ -19,13 +19,7 @@ import id.haonlabs.dicodingeventapp.worker.ReminderWorker
 import java.util.concurrent.TimeUnit
 
 class SettingFragment : Fragment() {
-
-    private var _binding: FragmentSettingBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding
-        get() = _binding!!
+    private lateinit var binding: FragmentSettingBinding
 
     private val viewModel: SettingFragmentViewModel by viewModels {
         ViewModelFactory.getInstance(requireActivity())
@@ -33,7 +27,10 @@ class SettingFragment : Fragment() {
     private lateinit var workManager: WorkManager
     private lateinit var periodicWorkRequest: PeriodicWorkRequest
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.getThemeSettings().observe(viewLifecycleOwner) { isDarkModeActive ->
@@ -56,15 +53,15 @@ class SettingFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentSettingBinding.inflate(inflater, container, false)
+        binding = FragmentSettingBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        binding.switchDarkMode.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean
-            ->
+        binding.switchDarkMode.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             viewModel.saveThemeSetting(isChecked)
         }
         binding.switchDailyReminder.setOnCheckedChangeListener {
             _: CompoundButton?,
-            isChecked: Boolean ->
+            isChecked: Boolean,
+            ->
             if (isChecked) {
                 workManager.pruneWork()
                 val state = workManager.getWorkInfosByTag(WORKER_TAG).get()
@@ -85,7 +82,8 @@ class SettingFragment : Fragment() {
         val constraints =
             Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
         periodicWorkRequest =
-            PeriodicWorkRequest.Builder(ReminderWorker::class.java, 1, TimeUnit.DAYS)
+            PeriodicWorkRequest
+                .Builder(ReminderWorker::class.java, 1, TimeUnit.DAYS)
                 .setConstraints(constraints)
                 .addTag(WORKER_TAG)
                 .build()
@@ -96,11 +94,6 @@ class SettingFragment : Fragment() {
     private fun cancelPeriodicTask() {
         workManager.cancelAllWorkByTag(WORKER_TAG)
         viewModel.saveReminderSetting(false)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     companion object {

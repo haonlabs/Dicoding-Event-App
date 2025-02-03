@@ -14,17 +14,16 @@ import id.haonlabs.dicodingeventapp.viewmodel.ViewModelFactory
 import id.haonlabs.dicodingeventapp.viewmodel.favorite.FavoriteFragmentViewModel
 
 class FavoriteFragment : Fragment() {
-
-    private var _binding: FragmentFavoriteBinding? = null
-
-    private val binding
-        get() = _binding!!
+    private lateinit var binding: FragmentFavoriteBinding
 
     private val viewModel: FavoriteFragmentViewModel by viewModels {
         ViewModelFactory.getInstance(requireActivity())
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null) {
@@ -33,7 +32,6 @@ class FavoriteFragment : Fragment() {
 
         viewModel.favoriteEvent.observe(viewLifecycleOwner) { result ->
             if (result != null) {
-
                 binding.progressBar.visibility = View.GONE
                 binding.rvFavorite.layoutManager = LinearLayoutManager(requireActivity())
                 val items = arrayListOf<ListEventsItem>()
@@ -54,7 +52,7 @@ class FavoriteFragment : Fragment() {
                             beginTime = "",
                             endTime = "",
                             category = "",
-                        )
+                        ),
                     )
                 }
                 val adapter = EventAdapter(items)
@@ -69,7 +67,7 @@ class FavoriteFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentFavoriteBinding.inflate(inflater, container, false)
+        binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         binding.btnTryAgain.setOnClickListener {

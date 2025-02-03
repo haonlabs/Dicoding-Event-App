@@ -29,7 +29,5 @@ object Injection {
         return SearchEventRepository.getInstance(apiService)
     }
 
-    fun provideFavoriteEventRepository(context: Context): FavoriteEventRepository {
-        return FavoriteEventRepository(context)
-    }
+    fun provideFavoriteEventRepository(context: Context): FavoriteEventRepository = FavoriteEventRepository(context)
 }

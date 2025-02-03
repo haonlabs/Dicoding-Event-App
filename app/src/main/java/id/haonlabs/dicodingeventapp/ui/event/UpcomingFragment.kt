@@ -14,19 +14,16 @@ import id.haonlabs.dicodingeventapp.viewmodel.ViewModelFactory
 import id.haonlabs.dicodingeventapp.viewmodel.event.UpcomingFragmentViewModel
 
 class UpcomingFragment : Fragment() {
-
-    private var _binding: FragmentUpcomingBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding
-        get() = _binding!!
+    private lateinit var binding: FragmentUpcomingBinding
 
     private val viewModel: UpcomingFragmentViewModel by viewModels {
         ViewModelFactory.getInstance(requireActivity())
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null) {
@@ -65,7 +62,7 @@ class UpcomingFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentUpcomingBinding.inflate(inflater, container, false)
+        binding = FragmentUpcomingBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         binding.btnTryAgain.setOnClickListener {
@@ -73,10 +70,5 @@ class UpcomingFragment : Fragment() {
             binding.errorPage.visibility = View.GONE
         }
         return root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

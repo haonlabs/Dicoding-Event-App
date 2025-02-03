@@ -19,39 +19,38 @@ import id.haonlabs.dicodingeventapp.viewmodel.search.SearchActivityViewModel
 import id.haonlabs.dicodingeventapp.viewmodel.setting.SettingFragmentViewModel
 
 class ViewModelFactory
-private constructor(
-    private val eventRepository: EventRepository,
-    private val upcomingEventRepository: UpcomingEventRepository,
-    private val finishedEventRepository: FinishedEventRepository,
-    private val searchEventRepository: SearchEventRepository,
-    private val favoriteEventRepository: FavoriteEventRepository,
-    private val pref: SettingPreference,
-) : ViewModelProvider.NewInstanceFactory() {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return when {
-            modelClass.isAssignableFrom(DetailActivityViewModel::class.java) ->
-                DetailActivityViewModel(eventRepository, favoriteEventRepository) as T
-            modelClass.isAssignableFrom(UpcomingFragmentViewModel::class.java) ->
-                UpcomingFragmentViewModel(upcomingEventRepository) as T
-            modelClass.isAssignableFrom(FinishedFragmentViewModel::class.java) ->
-                FinishedFragmentViewModel(finishedEventRepository) as T
-            modelClass.isAssignableFrom(SearchActivityViewModel::class.java) ->
-                SearchActivityViewModel(searchEventRepository) as T
-            modelClass.isAssignableFrom(FavoriteFragmentViewModel::class.java) ->
-                FavoriteFragmentViewModel(favoriteEventRepository) as T
-            modelClass.isAssignableFrom(SettingFragmentViewModel::class.java) ->
-                SettingFragmentViewModel(pref) as T
-            else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
-        }
-    }
+    private constructor(
+        private val eventRepository: EventRepository,
+        private val upcomingEventRepository: UpcomingEventRepository,
+        private val finishedEventRepository: FinishedEventRepository,
+        private val searchEventRepository: SearchEventRepository,
+        private val favoriteEventRepository: FavoriteEventRepository,
+        private val pref: SettingPreference,
+    ) : ViewModelProvider.NewInstanceFactory() {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T =
+            when {
+                modelClass.isAssignableFrom(DetailActivityViewModel::class.java) ->
+                    DetailActivityViewModel(eventRepository, favoriteEventRepository) as T
+                modelClass.isAssignableFrom(UpcomingFragmentViewModel::class.java) ->
+                    UpcomingFragmentViewModel(upcomingEventRepository) as T
+                modelClass.isAssignableFrom(FinishedFragmentViewModel::class.java) ->
+                    FinishedFragmentViewModel(finishedEventRepository) as T
+                modelClass.isAssignableFrom(SearchActivityViewModel::class.java) ->
+                    SearchActivityViewModel(searchEventRepository) as T
+                modelClass.isAssignableFrom(FavoriteFragmentViewModel::class.java) ->
+                    FavoriteFragmentViewModel(favoriteEventRepository) as T
+                modelClass.isAssignableFrom(SettingFragmentViewModel::class.java) ->
+                    SettingFragmentViewModel(pref) as T
+                else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
+            }
 
-    companion object {
-        private var instance: ViewModelFactory? = null
+        companion object {
+            private var instance: ViewModelFactory? = null
 
-        fun getInstance(context: Context): ViewModelFactory =
-            instance
-                ?: synchronized(this) {
+            fun getInstance(context: Context): ViewModelFactory =
+                instance
+                    ?: synchronized(this) {
                         instance
                             ?: ViewModelFactory(
                                 Injection.provideRepository(),
@@ -61,7 +60,6 @@ private constructor(
                                 Injection.provideFavoriteEventRepository(context),
                                 SettingPreference.getInstance(context.dataStore),
                             )
-                    }
-                    .also { instance = it }
+                    }.also { instance = it }
+        }
     }
-}

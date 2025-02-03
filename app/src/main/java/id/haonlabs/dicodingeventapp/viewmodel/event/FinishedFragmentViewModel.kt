@@ -6,8 +6,9 @@ import id.haonlabs.dicodingeventapp.data.response.ListEventsItem
 import id.haonlabs.dicodingeventapp.repository.FinishedEventRepository
 import id.haonlabs.dicodingeventapp.utils.Result
 
-class FinishedFragmentViewModel(private val listEventsRepository: FinishedEventRepository) :
-    ViewModel() {
+class FinishedFragmentViewModel(
+    private val listEventsRepository: FinishedEventRepository,
+) : ViewModel() {
     lateinit var listEvents: LiveData<Result<List<ListEventsItem>>>
 
     fun getFinishedEvent(limit: Int): LiveData<Result<List<ListEventsItem>>> {

@@ -18,19 +18,20 @@ import id.haonlabs.dicodingeventapp.databinding.ActivityMainBinding
 import id.haonlabs.dicodingeventapp.ui.search.SearchActivity
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityMainBinding
 
     private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean
-            ->
-            Toast.makeText(
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            Toast
+                .makeText(
                     this,
-                    if (isGranted) "Notifications permission granted"
-                    else "Notifications permission rejected",
+                    if (isGranted) {
+                        "Notifications permission granted"
+                    } else {
+                        "Notifications permission rejected"
+                    },
                     Toast.LENGTH_SHORT,
-                )
-                .show()
+                ).show()
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                     R.id.navigation_finished,
                     R.id.navigation_favorite,
                     R.id.navigation_setting,
-                )
+                ),
             )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
@@ -69,7 +70,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         if (item.itemId == R.id.search_btn) {
             binding.searchView.show()
 

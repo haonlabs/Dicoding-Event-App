@@ -16,9 +16,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ReminderWorker(context: Context, workerParams: WorkerParameters) :
-    Worker(context, workerParams) {
-
+class ReminderWorker(
+    context: Context,
+    workerParams: WorkerParameters,
+) : Worker(context, workerParams) {
     companion object {
         const val NOTIFICATION_ID = 1
         const val CHANNEL_ID = "channel_01"
@@ -27,9 +28,7 @@ class ReminderWorker(context: Context, workerParams: WorkerParameters) :
 
     private var resultStatus: Result? = null
 
-    override fun doWork(): Result {
-        return getUpcomingEvent()
-    }
+    override fun doWork(): Result = getUpcomingEvent()
 
     private fun getUpcomingEvent(): Result {
         Looper.prepare()
@@ -55,21 +54,28 @@ class ReminderWorker(context: Context, workerParams: WorkerParameters) :
                 }
 
                 @RequiresApi(Build.VERSION_CODES.O)
-                override fun onFailure(call: Call<EventResponse>, t: Throwable) {
+                override fun onFailure(
+                    call: Call<EventResponse>,
+                    t: Throwable,
+                ) {
                     showNotification("Gagal mendapatkan event terdekat", t.message.toString())
                     resultStatus = Result.failure()
                 }
-            }
+            },
         )
         return resultStatus ?: Result.failure()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun showNotification(title: String?, description: String?) {
+    private fun showNotification(
+        title: String?,
+        description: String?,
+    ) {
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notification: NotificationCompat.Builder =
-            NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+            NotificationCompat
+                .Builder(applicationContext, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_upcoming_black)
                 .setSubText("Event yang akan datang")
                 .setContentTitle(title)

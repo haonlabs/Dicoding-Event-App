@@ -11,37 +11,34 @@ import kotlinx.coroutines.flow.map
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-class SettingPreference private constructor(private val dataStore: DataStore<Preferences>) {
+class SettingPreference private constructor(
+    private val dataStore: DataStore<Preferences>,
+) {
+    companion object {
+        private val THEME_KEY = booleanPreferencesKey("theme_setting")
+        private val REMINDER_KEY = booleanPreferencesKey("reminder_setting")
 
-    private val THEME_KEY = booleanPreferencesKey("theme_setting")
-    private val REMINDER_KEY = booleanPreferencesKey("reminder_setting")
+        @Volatile
+        private var myInstance: SettingPreference? = null
 
-    fun getThemeSetting(): Flow<Boolean> {
-        return dataStore.data.map { preferences -> preferences[THEME_KEY] ?: false }
+        fun getInstance(dataStore: DataStore<Preferences>): SettingPreference =
+            myInstance
+                ?: synchronized(this) {
+                    val instance = SettingPreference(dataStore)
+                    myInstance = instance
+                    instance
+                }
     }
+
+    fun getThemeSetting(): Flow<Boolean> = dataStore.data.map { preferences -> preferences[THEME_KEY] ?: false }
 
     suspend fun saveThemeSetting(isDarkModeActive: Boolean) {
         dataStore.edit { preferences -> preferences[THEME_KEY] = isDarkModeActive }
     }
 
-    fun getReminderSetting(): Flow<Boolean> {
-        return dataStore.data.map { preferences -> preferences[REMINDER_KEY] ?: false }
-    }
+    fun getReminderSetting(): Flow<Boolean> = dataStore.data.map { preferences -> preferences[REMINDER_KEY] ?: false }
 
     suspend fun saveReminderSetting(isReminderActive: Boolean) {
         dataStore.edit { preferences -> preferences[REMINDER_KEY] = isReminderActive }
-    }
-
-    companion object {
-        @Volatile private var INSTANCE: SettingPreference? = null
-
-        fun getInstance(dataStore: DataStore<Preferences>): SettingPreference {
-            return INSTANCE
-                ?: synchronized(this) {
-                    val instance = SettingPreference(dataStore)
-                    INSTANCE = instance
-                    instance
-                }
-        }
     }
 }

@@ -15,7 +15,6 @@ import id.haonlabs.dicodingeventapp.viewmodel.ViewModelFactory
 import id.haonlabs.dicodingeventapp.viewmodel.search.SearchActivityViewModel
 
 class SearchActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivitySearchBinding
 
     private val viewModel: SearchActivityViewModel by viewModels {

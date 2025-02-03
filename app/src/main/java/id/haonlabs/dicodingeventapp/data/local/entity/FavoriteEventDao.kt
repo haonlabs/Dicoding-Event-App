@@ -15,7 +15,9 @@ interface FavoriteEventDao {
     @Query("SELECT * FROM FavoriteEvent WHERE id = :id")
     fun getFavoriteEventById(id: Int): LiveData<FavoriteEvent>
 
-    @Delete suspend fun delete(favoriteEvent: FavoriteEvent)
+    @Delete
+    suspend fun delete(favoriteEvent: FavoriteEvent)
 
-    @Query("SELECT * FROM FavoriteEvent") fun getFavoriteEvents(): LiveData<List<FavoriteEvent>>
+    @Query("SELECT * FROM FavoriteEvent")
+    fun getFavoriteEvents(): LiveData<List<FavoriteEvent>>
 }

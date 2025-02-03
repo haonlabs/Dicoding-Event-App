@@ -15,21 +15,34 @@ class EventAdapter(
     private val listEvent: List<ListEventsItem>,
     private val horizontal: Boolean = false,
 ) : RecyclerView.Adapter<EventAdapter.ListViewHolder>() {
-    class ListViewHolder(var binding: ViewBinding) : RecyclerView.ViewHolder(binding.root)
+    class ListViewHolder(
+        var binding: ViewBinding,
+    ) : RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        @Suppress("ktlint:standard:function-signature")
+        viewType: Int,
+    ): ListViewHolder {
         val binding =
-            (if (horizontal)
-                HorizontalRowEventBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false,
-                )
-            else ItemRowEventBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            (
+                if (horizontal) {
+                    HorizontalRowEventBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false,
+                    )
+                } else {
+                    ItemRowEventBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                }
+            )
         return ListViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: ListViewHolder,
+        position: Int,
+    ) {
         val data = listEvent[position]
         if (horizontal) {
             val binding = holder.binding as HorizontalRowEventBinding

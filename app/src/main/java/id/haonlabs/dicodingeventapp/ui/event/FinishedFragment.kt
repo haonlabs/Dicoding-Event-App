@@ -14,17 +14,16 @@ import id.haonlabs.dicodingeventapp.viewmodel.ViewModelFactory
 import id.haonlabs.dicodingeventapp.viewmodel.event.FinishedFragmentViewModel
 
 class FinishedFragment : Fragment() {
-
-    private var _binding: FragmentFinishedBinding? = null
-
-    private val binding
-        get() = _binding!!
+    private lateinit var binding: FragmentFinishedBinding
 
     private val viewModel: FinishedFragmentViewModel by viewModels {
         ViewModelFactory.getInstance(requireActivity())
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null) {
@@ -63,8 +62,7 @@ class FinishedFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-
-        _binding = FragmentFinishedBinding.inflate(inflater, container, false)
+        binding = FragmentFinishedBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         binding.btnTryAgain.setOnClickListener {
@@ -73,10 +71,5 @@ class FinishedFragment : Fragment() {
         }
 
         return root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

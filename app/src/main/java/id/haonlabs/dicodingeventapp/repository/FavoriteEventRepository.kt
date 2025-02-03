@@ -5,7 +5,9 @@ import id.haonlabs.dicodingeventapp.data.local.entity.FavoriteEvent
 import id.haonlabs.dicodingeventapp.data.local.entity.FavoriteEventDao
 import id.haonlabs.dicodingeventapp.data.local.room.FavoriteEventRoomDatabase
 
-class FavoriteEventRepository(context: Context) {
+class FavoriteEventRepository(
+    context: Context,
+) {
     private val mFavoriteEventDao: FavoriteEventDao
 
     init {

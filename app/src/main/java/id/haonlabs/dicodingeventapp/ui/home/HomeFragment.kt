@@ -17,13 +17,7 @@ import id.haonlabs.dicodingeventapp.viewmodel.event.UpcomingFragmentViewModel
 import id.haonlabs.dicodingeventapp.viewmodel.setting.SettingFragmentViewModel
 
 class HomeFragment : Fragment() {
-
-    private var _binding: FragmentHomeBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding
-        get() = _binding!!
+    private lateinit var binding: FragmentHomeBinding
 
     private val upcomingViewModel: UpcomingFragmentViewModel by viewModels {
         ViewModelFactory.getInstance(requireActivity())
@@ -37,7 +31,10 @@ class HomeFragment : Fragment() {
 
     private val limit = 5
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         if (savedInstanceState == null) {
             finishedViewModel.getFinishedEvent(limit)
@@ -46,8 +43,11 @@ class HomeFragment : Fragment() {
 
         settingsViewModel.getThemeSettings().observe(viewLifecycleOwner) { isDarkModeActive ->
             AppCompatDelegate.setDefaultNightMode(
-                if (isDarkModeActive) AppCompatDelegate.MODE_NIGHT_YES
-                else AppCompatDelegate.MODE_NIGHT_NO
+                if (isDarkModeActive) {
+                    AppCompatDelegate.MODE_NIGHT_YES
+                } else {
+                    AppCompatDelegate.MODE_NIGHT_NO
+                },
             )
         }
 
@@ -60,7 +60,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         binding.btnTryAgain.setOnClickListener {
@@ -134,10 +134,5 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

@@ -12,22 +12,23 @@ abstract class FavoriteEventRoomDatabase : RoomDatabase() {
     abstract fun favoriteEventDao(): FavoriteEventDao
 
     companion object {
-        @Volatile private var INSTANCE: FavoriteEventRoomDatabase? = null
+        @Volatile
+        private var myInstance: FavoriteEventRoomDatabase? = null
 
         @JvmStatic
         fun getDatabase(context: Context): FavoriteEventRoomDatabase {
-            if (INSTANCE == null) {
+            if (myInstance == null) {
                 synchronized(FavoriteEventRoomDatabase::class.java) {
-                    INSTANCE =
-                        Room.databaseBuilder(
+                    myInstance =
+                        Room
+                            .databaseBuilder(
                                 context,
                                 FavoriteEventRoomDatabase::class.java,
                                 "favoriteevent_database",
-                            )
-                            .build()
+                            ).build()
                 }
             }
-            return INSTANCE as FavoriteEventRoomDatabase
+            return myInstance as FavoriteEventRoomDatabase
         }
     }
 }

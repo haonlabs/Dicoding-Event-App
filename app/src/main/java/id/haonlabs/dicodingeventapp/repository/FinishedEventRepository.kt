@@ -10,8 +10,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class FinishedEventRepository private constructor(private val apiService: ApiService) {
-
+class FinishedEventRepository private constructor(
+    private val apiService: ApiService,
+) {
     private val result = MediatorLiveData<Result<List<ListEventsItem>>>()
 
     fun getFinishedEvent(limit: Int): LiveData<Result<List<ListEventsItem>>> {
@@ -30,10 +31,13 @@ class FinishedEventRepository private constructor(private val apiService: ApiSer
                     }
                 }
 
-                override fun onFailure(call: Call<EventResponse>, t: Throwable) {
+                override fun onFailure(
+                    call: Call<EventResponse>,
+                    t: Throwable,
+                ) {
                     result.value = Result.Error(t.message.toString())
                 }
-            }
+            },
         )
         return result
     }
@@ -41,11 +45,10 @@ class FinishedEventRepository private constructor(private val apiService: ApiSer
     companion object {
         @Volatile private var instance: FinishedEventRepository? = null
 
-        fun getInstance(apiService: ApiService): FinishedEventRepository {
-            return instance
+        fun getInstance(apiService: ApiService): FinishedEventRepository =
+            instance
                 ?: synchronized(this) {
                     instance ?: FinishedEventRepository(apiService).also { instance = it }
                 }
-        }
     }
 }
