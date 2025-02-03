@@ -8,13 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import id.haonlabs.dicodingeventapp.adapter.EventAdapter
-import id.haonlabs.dicodingeventapp.databinding.FragmentFinishedBinding
+import id.haonlabs.dicodingeventapp.databinding.FragmentEventBinding
 import id.haonlabs.dicodingeventapp.utils.Result
 import id.haonlabs.dicodingeventapp.viewmodel.ViewModelFactory
 import id.haonlabs.dicodingeventapp.viewmodel.event.FinishedFragmentViewModel
 
 class FinishedFragment : Fragment() {
-    private lateinit var binding: FragmentFinishedBinding
+    private lateinit var binding: FragmentEventBinding
 
     private val viewModel: FinishedFragmentViewModel by viewModels {
         ViewModelFactory.getInstance(requireActivity())
@@ -40,9 +40,9 @@ class FinishedFragment : Fragment() {
                     is Result.Success -> {
                         binding.loading.visibility = View.GONE
                         val listEventData = result.data
-                        binding.rvFinished.layoutManager = LinearLayoutManager(requireActivity())
+                        binding.rvEvent.layoutManager = LinearLayoutManager(requireActivity())
                         val adapter = EventAdapter(listEventData)
-                        binding.rvFinished.adapter = adapter
+                        binding.rvEvent.adapter = adapter
                         binding.errorPage.visibility = View.GONE
                     }
 
@@ -62,7 +62,7 @@ class FinishedFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentFinishedBinding.inflate(inflater, container, false)
+        binding = FragmentEventBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         binding.btnTryAgain.setOnClickListener {

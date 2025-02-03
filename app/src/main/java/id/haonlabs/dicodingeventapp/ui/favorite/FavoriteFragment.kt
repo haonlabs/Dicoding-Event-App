@@ -9,12 +9,12 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import id.haonlabs.dicodingeventapp.adapter.EventAdapter
 import id.haonlabs.dicodingeventapp.data.response.ListEventsItem
-import id.haonlabs.dicodingeventapp.databinding.FragmentFavoriteBinding
+import id.haonlabs.dicodingeventapp.databinding.FragmentEventBinding
 import id.haonlabs.dicodingeventapp.viewmodel.ViewModelFactory
 import id.haonlabs.dicodingeventapp.viewmodel.favorite.FavoriteFragmentViewModel
 
 class FavoriteFragment : Fragment() {
-    private lateinit var binding: FragmentFavoriteBinding
+    private lateinit var binding: FragmentEventBinding
 
     private val viewModel: FavoriteFragmentViewModel by viewModels {
         ViewModelFactory.getInstance(requireActivity())
@@ -32,8 +32,8 @@ class FavoriteFragment : Fragment() {
 
         viewModel.favoriteEvent.observe(viewLifecycleOwner) { result ->
             if (result != null) {
-                binding.progressBar.visibility = View.GONE
-                binding.rvFavorite.layoutManager = LinearLayoutManager(requireActivity())
+                binding.loading.visibility = View.GONE
+                binding.rvEvent.layoutManager = LinearLayoutManager(requireActivity())
                 val items = arrayListOf<ListEventsItem>()
                 result.forEach {
                     items.add(
@@ -56,7 +56,7 @@ class FavoriteFragment : Fragment() {
                     )
                 }
                 val adapter = EventAdapter(items)
-                binding.rvFavorite.adapter = adapter
+                binding.rvEvent.adapter = adapter
                 binding.errorPage.visibility = View.GONE
             }
         }
@@ -67,7 +67,7 @@ class FavoriteFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentFavoriteBinding.inflate(inflater, container, false)
+        binding = FragmentEventBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         binding.btnTryAgain.setOnClickListener {
